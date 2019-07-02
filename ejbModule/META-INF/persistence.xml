@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="consmedDS" transaction-type="JTA">
+	<jta-data-source>java:/consmedDS</jta-data-source>
+	<class>consmed.core.model.entities.AuthRol</class>
+	<class>consmed.core.model.entities.AuthUsuario</class>
+	<class>consmed.core.model.entities.FactFactura</class>
+	<class>consmed.core.model.entities.FactHospital</class>
+	<class>consmed.core.model.entities.MedEspecialidad</class>
+	<class>consmed.core.model.entities.MedMedico</class>
+	<class>consmed.core.model.entities.PacCabeceraHc</class>
+	<class>consmed.core.model.entities.PacHistoriaClinica</class>
+	<class>consmed.core.model.entities.PacPaciente</class>
+	<class>consmed.core.model.entities.ReserCita</class>
+	<class>consmed.core.model.entities.SegBitacora</class>
+	</persistence-unit>
+</persistence>
