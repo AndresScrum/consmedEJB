@@ -16,7 +16,7 @@ public class SegBitacora implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="SEG_BITACORA_IDBITACORA_GENERATOR", sequenceName="SEQ_SEG_BITACORA")
+	@SequenceGenerator(name="SEG_BITACORA_IDBITACORA_GENERATOR", sequenceName="SEQ_SEG_BITACORA",allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEG_BITACORA_IDBITACORA_GENERATOR")
 	@Column(name="id_bitacora")
 	private Integer idBitacora;

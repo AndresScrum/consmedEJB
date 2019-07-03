@@ -41,28 +41,48 @@ public class ReserManagerCita {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		String fechaString = dateFormat.format(fecha);
 		Date date1 = new SimpleDateFormat("yyyy-MM-dd").parse(fechaString);
-		System.out.println("date1: "+date1);
+		System.out.println("date1: " + date1);
 		String JPQL = "SELECT c FROM ReserCita c " + "WHERE c.medMedico.idMedico=?1 " + "AND c.fechaReser=?2";
 		Query q = em.createQuery(JPQL, ReserCita.class);
 		q.setParameter(1, id_medico);
 		q.setParameter(2, date1);
 		@SuppressWarnings("unchecked")
-		List<ReserCita> list = q.getResultList();		
+		List<ReserCita> list = q.getResultList();
 		return list;
 	}
-	// Obtiene cita por id de paciente
-		public List<ReserCita> findCitaByPaciente(int idPaciente) throws ParseException {
-			
-			String JPQL = "SELECT c FROM ReserCita c " + "WHERE c.pacPaciente.idPaciente=?1 ";
-			Query q = em.createQuery(JPQL, ReserCita.class);
-			q.setParameter(1, idPaciente);
-			@SuppressWarnings("unchecked")
-			List<ReserCita> list = q.getResultList();		
-			return list;
-		}
 
-	public void ingresarReserCita(PacPaciente pacPaciente,MedMedico medMedico, Date fechaReser,
-			Time horaReser, String asuntoReser, String sintomaReser) {
+	// Obtiene cita por id de paciente
+	public List<ReserCita> findCitaByPaciente(int idPaciente) throws ParseException {
+		String JPQL = "SELECT c FROM ReserCita c " + "WHERE c.pacPaciente.idPaciente=?1 ";
+		Query q = em.createQuery(JPQL, ReserCita.class);
+		q.setParameter(1, idPaciente);
+		@SuppressWarnings("unchecked")
+		List<ReserCita> list = q.getResultList();
+		return list;
+	}
+
+	// Obtiene citas no pagadas por id de paciente
+	public List<ReserCita> findCitaNoPagadoByPaciente(int idPaciente) throws ParseException {
+		String JPQL = "SELECT c FROM ReserCita c " + "WHERE c.pagoReser=false AND c.pacPaciente.idPaciente=?1 ";
+		Query q = em.createQuery(JPQL, ReserCita.class);
+		q.setParameter(1, idPaciente);
+		@SuppressWarnings("unchecked")
+		List<ReserCita> list = q.getResultList();
+		return list;
+	}
+
+	// Obtiene cita pagadas por id de paciente
+	public List<ReserCita> findCitaPagadoByPaciente(int idPaciente) throws ParseException {
+		String JPQL = "SELECT c FROM ReserCita c " + "WHERE c.pagoReser=true AND c.pacPaciente.idPaciente=?1 ";
+		Query q = em.createQuery(JPQL, ReserCita.class);
+		q.setParameter(1, idPaciente);
+		@SuppressWarnings("unchecked")
+		List<ReserCita> list = q.getResultList();
+		return list;
+	}
+
+	public void ingresarReserCita(PacPaciente pacPaciente, MedMedico medMedico, Date fechaReser, Time horaReser,
+			String asuntoReser, String sintomaReser) {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		String fechaString = dateFormat.format(fechaReser);
 		try {
@@ -71,16 +91,16 @@ public class ReserManagerCita {
 			e.printStackTrace();
 		}
 		System.out.println("Ingresando cita...");
-			ReserCita cita=new ReserCita();
-			cita.setPacPaciente(pacPaciente);
-			cita.setMedMedico(medMedico);
-			cita.setFechaReser(fechaReser);
-			cita.setHoraReser(horaReser);
-			cita.setAsuntoReser(asuntoReser);
-			cita.setSintomaReser(sintomaReser);
-			cita.setActivoReser(true);
-			cita.setPagoReser(false);
-			em.persist(cita);
+		ReserCita cita = new ReserCita();
+		cita.setPacPaciente(pacPaciente);
+		cita.setMedMedico(medMedico);
+		cita.setFechaReser(fechaReser);
+		cita.setHoraReser(horaReser);
+		cita.setAsuntoReser(asuntoReser);
+		cita.setSintomaReser(sintomaReser);
+		cita.setActivoReser(true);
+		cita.setPagoReser(false);
+		em.persist(cita);
 	}
 
 }
