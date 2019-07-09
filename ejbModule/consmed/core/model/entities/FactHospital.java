@@ -16,7 +16,7 @@ public class FactHospital implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="FACT_HOSPITAL_IDHOSPITAL_GENERATOR", sequenceName="SEQ_FACT_HOSPITAL")
+	@SequenceGenerator(name="FACT_HOSPITAL_IDHOSPITAL_GENERATOR", sequenceName="SEQ_FACT_HOSPITAL",allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="FACT_HOSPITAL_IDHOSPITAL_GENERATOR")
 	@Column(name="id_hospital")
 	private Integer idHospital;
@@ -34,7 +34,7 @@ public class FactHospital implements Serializable {
 	private String telefonoHosp;
 
 	//bi-directional many-to-one association to FactFactura
-	@OneToMany(mappedBy="factHospital")
+	@OneToMany(mappedBy="factHospital",cascade=CascadeType.ALL)
 	private List<FactFactura> factFacturas;
 
 	public FactHospital() {

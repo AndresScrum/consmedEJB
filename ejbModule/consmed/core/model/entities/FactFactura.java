@@ -16,7 +16,7 @@ public class FactFactura implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="FACT_FACTURA_IDFACTURA_GENERATOR", sequenceName="SEQ_FACT_FACTURA")
+	@SequenceGenerator(name="FACT_FACTURA_IDFACTURA_GENERATOR", sequenceName="SEQ_FACT_FACTURA",allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="FACT_FACTURA_IDFACTURA_GENERATOR")
 	@Column(name="id_factura")
 	private Integer idFactura;

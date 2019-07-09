@@ -16,7 +16,7 @@ public class PacPaciente implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="PAC_PACIENTE_IDPACIENTE_GENERATOR", sequenceName="SEQ_PAC_PACIENTE")
+	@SequenceGenerator(name="PAC_PACIENTE_IDPACIENTE_GENERATOR", sequenceName="SEQ_PAC_PACIENTE",allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="PAC_PACIENTE_IDPACIENTE_GENERATOR")
 	@Column(name="id_paciente")
 	private Integer idPaciente;
@@ -45,11 +45,11 @@ public class PacPaciente implements Serializable {
 	private String telefonoPac;
 
 	//bi-directional many-to-one association to FactFactura
-	@OneToMany(mappedBy="pacPaciente")
+	@OneToMany(mappedBy="pacPaciente",cascade=CascadeType.ALL)
 	private List<FactFactura> factFacturas;
 
 	//bi-directional many-to-one association to PacCabeceraHc
-	@OneToMany(mappedBy="pacPaciente")
+	@OneToMany(mappedBy="pacPaciente",cascade=CascadeType.ALL)
 	private List<PacCabeceraHc> pacCabeceraHcs;
 
 	//bi-directional many-to-one association to AuthUsuario
@@ -58,7 +58,7 @@ public class PacPaciente implements Serializable {
 	private AuthUsuario authUsuario;
 
 	//bi-directional many-to-one association to ReserCita
-	@OneToMany(mappedBy="pacPaciente")
+	@OneToMany(mappedBy="pacPaciente",cascade=CascadeType.ALL)
 	private List<ReserCita> reserCitas;
 
 	public PacPaciente() {

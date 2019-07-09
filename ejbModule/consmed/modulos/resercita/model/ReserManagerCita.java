@@ -36,13 +36,14 @@ public class ReserManagerCita {
 		return cit;
 	}
 
-	// Obtiene cita por id de médico
+	// Obtiene cita por id de médico y fecha
 	public List<ReserCita> findCitaByDocFecha(int id_medico, Date fecha) throws ParseException {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		String fechaString = dateFormat.format(fecha);
 		Date date1 = new SimpleDateFormat("yyyy-MM-dd").parse(fechaString);
 		System.out.println("date1: " + date1);
-		String JPQL = "SELECT c FROM ReserCita c " + "WHERE c.medMedico.idMedico=?1 " + "AND c.fechaReser=?2";
+		String JPQL = "SELECT c FROM ReserCita c " + "WHERE c.medMedico.idMedico=?1 " + 
+		"AND c.fechaReser=?2 AND c.activoReser=true";
 		Query q = em.createQuery(JPQL, ReserCita.class);
 		q.setParameter(1, id_medico);
 		q.setParameter(2, date1);
@@ -53,7 +54,7 @@ public class ReserManagerCita {
 
 	// Obtiene cita por id de paciente
 	public List<ReserCita> findCitaByPaciente(int idPaciente) throws ParseException {
-		String JPQL = "SELECT c FROM ReserCita c " + "WHERE c.pacPaciente.idPaciente=?1 ";
+		String JPQL = "SELECT c FROM ReserCita c " + "WHERE c.pacPaciente.idPaciente=?1 AND c.activoReser=true";
 		Query q = em.createQuery(JPQL, ReserCita.class);
 		q.setParameter(1, idPaciente);
 		@SuppressWarnings("unchecked")
@@ -63,9 +64,14 @@ public class ReserManagerCita {
 
 	// Obtiene citas no pagadas por id de paciente
 	public List<ReserCita> findCitaNoPagadoByPaciente(int idPaciente) throws ParseException {
-		String JPQL = "SELECT c FROM ReserCita c " + "WHERE c.pagoReser=false AND c.pacPaciente.idPaciente=?1 ";
+		Date fecha=new Date();
+		System.out.println("finf cita no pagado paciente: "+idPaciente);
+		String JPQL = "SELECT c FROM ReserCita c " + "WHERE c.pagoReser=false AND c.pacPaciente.idPaciente=?1"
+				+ " AND fechaReser>=?2 AND c.activoReser=true "
+				+ "order by fechaReser,horaReser asc";
 		Query q = em.createQuery(JPQL, ReserCita.class);
 		q.setParameter(1, idPaciente);
+		q.setParameter(2, fecha);
 		@SuppressWarnings("unchecked")
 		List<ReserCita> list = q.getResultList();
 		return list;
@@ -101,6 +107,13 @@ public class ReserManagerCita {
 		cita.setActivoReser(true);
 		cita.setPagoReser(false);
 		em.persist(cita);
+	}
+	
+	//Cambia el estado
+	public void actualizarEstadoCita(ReserCita cita, boolean estado) {
+		cita.setActivoReser(estado);
+		System.out.println("Actualizó");
+		em.merge(cita);
 	}
 
 }

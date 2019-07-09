@@ -17,7 +17,7 @@ public class PacHistoriaClinica implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="PAC_HISTORIA_CLINICA_IDHISTORIACLINICA_GENERATOR", sequenceName="SEQ_PAC_HISTORIA_CLINICA")
+	@SequenceGenerator(name="PAC_HISTORIA_CLINICA_IDHISTORIACLINICA_GENERATOR", sequenceName="SEQ_PAC_HISTORIA_CLINICA",allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="PAC_HISTORIA_CLINICA_IDHISTORIACLINICA_GENERATOR")
 	@Column(name="id_historia_clinica")
 	private Integer idHistoriaClinica;
