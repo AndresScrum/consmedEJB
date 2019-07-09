@@ -1,4 +1,5 @@
 package consmed.modulos.pacpaciente.model;
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.ejb.LocalBean;
@@ -310,6 +311,25 @@ em.merge(pacienteActual);
 				return false;
 		
 	}
+	/********************************************
+	 * Historia clinica
+	 * 
+	 ****************************************/
+	/**
+	 * Crear cabecera historia cl�nica
+	 */
+	public void ingresarPacCabeceraHc(int id_paciente,String fechaNacimiento,
+			double peso,double altura,String genero, String ocupacion) {
+		PacPaciente paciente=em.find(PacPaciente.class, id_paciente);
+		PacCabeceraHc cabera=new PacCabeceraHc();
+		cabera.setPacPaciente(paciente);
+		cabera.setFechaNacimiento(fechaNacimiento);
+		cabera.setPeso(new BigDecimal(peso));
+		cabera.setAltura(new BigDecimal(altura));
+		cabera.setGenero(genero);
+		cabera.setOcupacion(ocupacion);
+		em.persist(cabera);
+	}
 	@SuppressWarnings("unchecked")
 	public boolean existePacienteCabeceraHc(int id_paciente) {
 		// Método que me devuelve el paciente por identificación
@@ -325,6 +345,9 @@ em.merge(pacienteActual);
 				return false;
 		
 	}
+	
+	
+	
 	@SuppressWarnings("unchecked")
 	public boolean existePacienteFactura(int id_paciente) {
 		// Método que me devuelve el paciente por identificación
