@@ -2,6 +2,7 @@ package consmed.modulos.medmedico.model;
 
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -11,13 +12,18 @@ import consmed.core.model.entities.AuthRol;
 import consmed.core.model.entities.AuthUsuario;
 import consmed.core.model.entities.MedEspecialidad;
 import consmed.core.model.entities.MedMedico;
+import consmed.core.model.entities.PacHistoriaClinica;
+import consmed.core.model.entities.PacPaciente;
+import consmed.core.model.entities.ReserCita;
+import consmed.modulos.authautorizacion.model.AuthManagerAutorizacion;
 
 @Stateless
 @LocalBean
 public class MedManagerMedico {
 	@PersistenceContext(unitName = "consmedDS")
 	private EntityManager em;
-
+@EJB
+private AuthManagerAutorizacion authManagerAutorizacion;
 	public MedManagerMedico() {
 	}
 
@@ -41,9 +47,15 @@ public class MedManagerMedico {
 		return usuar;
 
 	}
+	
+	
 
 	// Encontrar medico por id
-	public MedMedico findMedicoById(int id_medico) {
+	public MedMedico findMedicoById(int id_medico) throws Exception {
+		if (id_medico==0) {
+			throw new Exception("Error al cargar el médico");
+	
+		}
 		MedMedico med = em.find(MedMedico.class, id_medico);
 		return med;
 
@@ -84,6 +96,21 @@ public class MedManagerMedico {
 			return false;
 	}
 
+	// Método que me devuelve el ROL POR NOMBRE
+	@SuppressWarnings("unchecked")
+	public boolean findAthRolNombre(String nombre) {
+		System.out.println("10");
+		String JPQL = "SELECT a FROM AuthRol a WHERE a.nombreRol=?1";
+		Query query = em.createQuery(JPQL, AuthRol.class);
+		query.setParameter(1, nombre);
+		List<AuthRol> lista;
+		lista = query.getResultList();
+		int numero = lista.size();
+		if (numero > 0)
+			return true;
+		else
+			return false;
+	}
 	// Método que me devuelve el usuario por correo
 	@SuppressWarnings("unchecked")
 	public boolean findAthUsuarioCorreo(String correo) {
@@ -240,22 +267,67 @@ public class MedManagerMedico {
 		especialidadActual.setNombreEsp(especialidadCargada.getNombreEsp());
 		em.merge(especialidadActual);
 	}
+	//método que me edita un médico
+	public void editarMedicoPerfil(MedMedico medicoCargada,int id_especialidad_fk,String nombre_rol) throws Exception {
+int id_rol_fk=authManagerAutorizacion.findRolByNombre(nombre_rol);
+		if (id_rol_fk==0) {
+		throw new Exception("Error al cargar el rol");
+	}
+	if (id_especialidad_fk==0) {
+		throw new Exception("Error al cargar la especialidad");
+	}
+	System.out.println("a");		
+		MedMedico medicoActual = findMedicoById(medicoCargada.getIdMedico());
+		System.out.println("b");
+		if (medicoActual == null) {
+			throw new Exception("Error al editar el médico");
+		}
+		System.out.println("d");
+		if (!medicoActual.getIdentificacionMed().equals(medicoCargada.getIdentificacionMed())) {
+			boolean existe = findMedMedicoByIdentificacion(medicoCargada.getIdentificacionMed());
+			if (existe) {
+				throw new Exception("La identificación ya está registrada con otro médico");
+			}
+		}
+		System.out.println("e");
+		if (!medicoActual.getCorreoMed().equals(medicoCargada.getCorreoMed())) {
+			boolean existe = findMedMedicoCorreo(medicoCargada.getCorreoMed());
+			if (existe) {
+				throw new Exception("El correo ya está registrado con otro médico");
+			}
+		}
+		System.out.println("f");
+		medicoActual.setActivoMed(medicoCargada.getActivoMed());
+		medicoActual.setApellidosMed((medicoCargada.getApellidosMed()));
+		medicoActual.setCorreoMed(medicoCargada.getCorreoMed());
+		medicoActual.setNombresMed((medicoCargada.getNombresMed()));
+		medicoActual.setFotoMed(medicoCargada.getFotoMed());
+		medicoActual.setTelefonoMed(medicoCargada.getTelefonoMed());
+		medicoActual.setIdMedico(medicoCargada.getIdMedico());
+		medicoActual.setIdentificacionMed(medicoCargada.getIdentificacionMed());
+		System.out.println("g");
+		AuthRol rol=new AuthRol();
+		rol=findRolById(id_rol_fk);
+		System.out.println("h");
+		AuthUsuario usuario=new AuthUsuario();
+		System.out.println("h1");
+		usuario=findUsuarioById(medicoCargada.getAuthUsuario().getIdUsuario());
+		System.out.println("PASA----"+usuario.getCorreoUsua());
+		System.out.println("h2");
+		usuario.setCorreoUsua(medicoCargada.getCorreoMed());
+		System.out.println("h3");
+		usuario.setAuthRol(rol);
+		System.out.println("i");
+		MedEspecialidad especialidad=new MedEspecialidad();
+		especialidad=findEspecialidadById(id_especialidad_fk);
+		medicoActual.setAuthUsuario(usuario);
+		medicoActual.setMedEspecialidad(especialidad);
+		em.merge(medicoActual);
 
+	}
 //método que me edita un médico
-	public void editarMedico(MedMedico medicoCargada,int id_especialidad_fk,int id_rol_fk) throws Exception {
-	System.out.println(""+id_especialidad_fk);
-	System.out.println(""+id_rol_fk);
-	System.out.println(""+medicoCargada.getApellidosMed());
-	System.out.println(""+medicoCargada.getCorreoMed());
-	System.out.println(""+medicoCargada.getFotoMed());
-	System.out.println(""+medicoCargada.getIdentificacionMed());
-
-	System.out.println(""+medicoCargada.getTelefonoMed());
-
-	System.out.println(""+medicoCargada.getIdMedico());
-
-	System.out.println(""+medicoCargada.getActivoMed());
-
+	public void editarMedico(MedMedico medicoCargada,int id_especialidad_fk,String nombre_rol) throws Exception {
+int id_rol_fk=authManagerAutorizacion.findRolByNombre(nombre_rol);
 		if (id_rol_fk==0) {
 		throw new Exception("Error al cargar el rol");
 	}
@@ -312,6 +384,39 @@ public class MedManagerMedico {
 
 	}
 
+	public void eliminarAuthRol(int id_rol) throws Exception {
+		AuthRol rol;
+		rol = findRolById(id_rol);
+		if (rol == null)
+			throw new Exception("No se puede Eliminar la especialidad revise si existe");
+		boolean existeRelacion = findFkAuthUsuario(id_rol);
+		if (existeRelacion)
+			throw new Exception("El rol no puede ser eliminado está siendo utilizado en los usuarios");
+		else
+			em.remove(rol);
+	}
+
+	public void eliminarMedMedico(int id_medico) throws Exception {
+		MedMedico med;
+		med = findMedicoById(id_medico);
+		if (med == null)
+			throw new Exception("No se puede Eliminar elmédico");
+		boolean existeRelacionReserva = findFkMededicoReserCita(id_medico);
+		boolean existeRelacionHistoriaCli = findFkMededicoHistoriaClinica(id_medico);
+		if (existeRelacionReserva)
+			throw new Exception("No se puede eliminar el médico está siendo utilizado en la tabla de citas");
+		else {
+			if (existeRelacionHistoriaCli) {
+				throw new Exception("No se puede eliminar el médico está siendo utilizado en la tabla de historias clínicas");
+			}else {
+				AuthUsuario usuario=findAthUsuarioByCorreo(med.getCorreoMed());
+				em.remove(med);
+				em.remove(usuario);
+				
+			}
+		}
+			
+	}
 	public void eliminarMedEspecialidad(int id_especialidad) throws Exception {
 		MedEspecialidad esp;
 		esp = findEspecialidadById(id_especialidad);
@@ -325,6 +430,30 @@ public class MedManagerMedico {
 	}
 
 	@SuppressWarnings("unchecked")
+	public boolean findFkMededicoReserCita(int id_medico) throws Exception {
+		if (id_medico == 0)
+			throw new Exception("El médico no se ha podido eliminar");
+		String JPQL = "SELECT r FROM ReserCita r  where r.medMedico.idMedico='" + id_medico+ "'";
+		Query query = em.createQuery(JPQL, ReserCita.class);
+		List<ReserCita> listaReservas= query.getResultList();
+		if (listaReservas.size() > 0)
+			return true;
+		else
+			return false;
+	}
+	@SuppressWarnings("unchecked")
+	public boolean findFkMededicoHistoriaClinica(int id_medico) throws Exception {
+		if (id_medico == 0)
+			throw new Exception("El médico no se ha podido eliminar");
+		String JPQL = "SELECT p FROM PacHistoriaClinica p  where p.medMedico.idMedico='" + id_medico+ "'";
+		Query query = em.createQuery(JPQL, PacHistoriaClinica.class);
+		List<PacHistoriaClinica> listaHistoriaCLinicas= query.getResultList();
+		if (listaHistoriaCLinicas.size() > 0)
+			return true;
+		else
+			return false;
+	}
+	@SuppressWarnings("unchecked")
 	public boolean findFkMedEspecialidad(int id_especialidad) throws Exception {
 		if (id_especialidad == 0)
 			throw new Exception("La especialidad no se ha podido eliminar");
@@ -336,5 +465,53 @@ public class MedManagerMedico {
 		else
 			return false;
 	}
-
+	@SuppressWarnings("unchecked")
+	public boolean findFkAuthUsuario(int id_rol) throws Exception {
+		if (id_rol== 0)
+			throw new Exception("La especialidad no se ha podido eliminar");
+		String JPQL = "SELECT a FROM AuthUsuario a  where a.authRol.idRol='" + id_rol+ "'";
+		Query query = em.createQuery(JPQL, AuthUsuario.class);
+		List<AuthUsuario> listaMedicos = query.getResultList();
+		if (listaMedicos.size() > 0)
+			return true;
+		else
+			return false;
+	}
+	// Método que ingresa un rol
+		public void ingresarRol(String nombres_rol,  boolean activo_rol) throws Exception {
+          boolean existeRol=findAthRolNombre(nombres_rol);
+          if (existeRol) {
+        		throw new Exception("Ya existe un rol con el nombre "+nombres_rol);
+		}
+			AuthRol rol=new AuthRol();
+			rol.setNombreRol(nombres_rol);
+			rol.setActivoRol(activo_rol);
+			em.persist(rol);
+		}
+		// Método que edita un rol
+		public void editarRol(AuthRol rolCargado) throws Exception {
+			
+			AuthRol rolActual=findRolById(rolCargado.getIdRol());
+			if (!rolActual.getNombreRol().equals(rolCargado.getNombreRol())) {
+				boolean existeRol=findAthRolNombre(rolCargado.getNombreRol());
+				if (existeRol) {
+		     		throw new Exception("Ya existe un rol con el nombre "+rolCargado.getNombreRol());
+		     		
+				}
+			}
+			rolActual.setNombreRol(rolCargado.getNombreRol());
+			rolActual.setActivoRol(rolCargado.getActivoRol());
+			em.merge(rolActual);
+		}
+		//Método que me devuelve medico por id usuario
+		public MedMedico findMedMedicoByUsuario(int id_usuario) {
+			String JPQL = "SELECT m FROM MedMedico m WHERE m.authUsuario.idUsuario=?1";
+			Query query = em.createQuery(JPQL, MedMedico.class);
+			query.setParameter(1, id_usuario);
+			MedMedico medico;
+			medico= (MedMedico) query.getSingleResult();
+			return medico;
+		}
+		
+		
 }

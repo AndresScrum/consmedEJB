@@ -16,7 +16,7 @@ public class MedMedico implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="MED_MEDICO_IDMEDICO_GENERATOR", sequenceName="SEQ_MED_MEDICO")
+	@SequenceGenerator(name="MED_MEDICO_IDMEDICO_GENERATOR", sequenceName="SEQ_MED_MEDICO",allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="MED_MEDICO_IDMEDICO_GENERATOR")
 	@Column(name="id_medico")
 	private Integer idMedico;
@@ -53,11 +53,11 @@ public class MedMedico implements Serializable {
 	private MedEspecialidad medEspecialidad;
 
 	//bi-directional many-to-one association to PacHistoriaClinica
-	@OneToMany(mappedBy="medMedico")
+	@OneToMany(mappedBy="medMedico",cascade=CascadeType.ALL)
 	private List<PacHistoriaClinica> pacHistoriaClinicas;
 
 	//bi-directional many-to-one association to ReserCita
-	@OneToMany(mappedBy="medMedico")
+	@OneToMany(mappedBy="medMedico",cascade=CascadeType.ALL)
 	private List<ReserCita> reserCitas;
 
 	public MedMedico() {

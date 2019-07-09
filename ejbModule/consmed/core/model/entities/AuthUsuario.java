@@ -16,7 +16,7 @@ public class AuthUsuario implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="AUTH_USUARIO_IDUSUARIO_GENERATOR", sequenceName="SEQ_AUTH_USUARIO")
+	@SequenceGenerator(name="AUTH_USUARIO_IDUSUARIO_GENERATOR", sequenceName="SEQ_AUTH_USUARIO",allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="AUTH_USUARIO_IDUSUARIO_GENERATOR")
 	@Column(name="id_usuario")
 	private Integer idUsuario;
@@ -33,15 +33,15 @@ public class AuthUsuario implements Serializable {
 	private AuthRol authRol;
 
 	//bi-directional many-to-one association to MedMedico
-	@OneToMany(mappedBy="authUsuario")
+	@OneToMany(mappedBy="authUsuario",cascade=CascadeType.ALL)
 	private List<MedMedico> medMedicos;
 
 	//bi-directional many-to-one association to PacPaciente
-	@OneToMany(mappedBy="authUsuario")
+	@OneToMany(mappedBy="authUsuario",cascade=CascadeType.ALL)
 	private List<PacPaciente> pacPacientes;
 
 	//bi-directional many-to-one association to SegBitacora
-	@OneToMany(mappedBy="authUsuario")
+	@OneToMany(mappedBy="authUsuario",cascade=CascadeType.ALL)
 	private List<SegBitacora> segBitacoras;
 
 	public AuthUsuario() {

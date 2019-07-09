@@ -46,21 +46,6 @@ public class PacManagerPaciente {
 		return pac;
 
 	}
-	
-	// Encontrar paciente por id_usuario
-		public PacPaciente findPacienteByIdUsuario(int id_usuario) {
-			String JPQL = "SELECT p FROM PacPaciente p WHERE p.authUsuario.idUsuario=?1";
-			Query query = em.createQuery(JPQL, PacPaciente.class);
-			query.setParameter(1, id_usuario);
-			List<PacPaciente> lista;
-			lista = query.getResultList();
-			PacPaciente pac=new PacPaciente();
-			for (PacPaciente pacPaciente : lista) {
-				 pac=pacPaciente;
-			}
-			return pac;
-
-		}
 
 	// Método que me devuelve la Lista de Pacientes
 	public List<PacPaciente> findAllPacPacientes() {
@@ -84,9 +69,21 @@ public class PacManagerPaciente {
 		else
 			return false;
 	}
-	
-	
 
+	// Encontrar paciente por id_usuario
+			public PacPaciente findPacienteByIdUsuario(int id_usuario) {
+				String JPQL = "SELECT p FROM PacPaciente p WHERE p.authUsuario.idUsuario=?1";
+				Query query = em.createQuery(JPQL, PacPaciente.class);
+				query.setParameter(1, id_usuario);
+				List<PacPaciente> lista;
+				lista = query.getResultList();
+				PacPaciente pac=new PacPaciente();
+				for (PacPaciente pacPaciente : lista) {
+					 pac=pacPaciente;
+				}
+				return pac;
+
+			}
 	// Método que me devuelve el usuario por correo
 	@SuppressWarnings("unchecked")
 	public boolean findAthUsuarioCorreo(String correo) {
@@ -103,6 +100,7 @@ public class PacManagerPaciente {
 			return false;
 	}
 
+	
 	public AuthUsuario findAthUsuarioByCorreo(String correo) {
 		String JPQL = "SELECT a FROM AuthUsuario a WHERE a.correoUsua=?1";
 		Query query = em.createQuery(JPQL, AuthUsuario.class);
@@ -110,6 +108,15 @@ public class PacManagerPaciente {
 		AuthUsuario usuario;
 		usuario= (AuthUsuario) query.getSingleResult();
 		return usuario;
+	}
+	//Método que me devuelve paciente por id usuario
+	public PacPaciente findPacPacienteByUsuario(int id_usuario) {
+		String JPQL = "SELECT p FROM PacPaciente p WHERE p.authUsuario.idUsuario=?1";
+		Query query = em.createQuery(JPQL, PacPaciente.class);
+		query.setParameter(1, id_usuario);
+		PacPaciente paciente;
+		paciente= (PacPaciente) query.getSingleResult();
+		return paciente;
 	}
 	// Método que me devuelve el paciente por correo
 	@SuppressWarnings("unchecked")
@@ -196,6 +203,7 @@ public class PacManagerPaciente {
 		public void editarPacPaciente(PacPaciente pacienteCargado) throws Exception {
   PacPaciente pacienteActual=findPacienteById(pacienteCargado.getIdPaciente());
   boolean existecorreo=false,existecorreoPaciente=false,existeIdentificacion=false;
+  
 if (!pacienteActual.getCorreoPac().equals(pacienteCargado.getCorreoPac())) {
 	existecorreo=findAthUsuarioCorreo(pacienteCargado.getCorreoPac());
 	existecorreoPaciente=findPacPacienteCorreo(pacienteCargado.getCorreoPac());
@@ -210,7 +218,7 @@ if (existeIdentificacion) {
 	throw new Exception("La identificación "+pacienteCargado.getIdentificacion()+" ya se encuentra registrada");	
 }
 }
-AuthUsuario usuario=findAthUsuarioByCorreo(pacienteCargado.getCorreoPac());
+AuthUsuario usuario=findAthUsuarioByCorreo(pacienteActual.getCorreoPac());
 pacienteActual.setActivoPac(pacienteCargado.getActivoPac());
 pacienteActual.setApellidosPac(pacienteCargado.getApellidosPac());
 pacienteActual.setAuthUsuario(usuario);
@@ -222,6 +230,44 @@ pacienteActual.setNombresPac(pacienteCargado.getNombresPac());
 pacienteActual.setTelefonoPac(pacienteCargado.getTelefonoPac());
 pacienteActual.setIdPaciente(pacienteCargado.getIdPaciente());
 em.merge(pacienteActual);
+		}
+
+
+//Método que ingresa una Paciente
+		public void editarPacPacientePerfil(PacPaciente pacienteCargado) throws Exception {
+			if (pacienteCargado==null) {
+				throw new Exception("Error en el id ");
+
+			}
+			PacPaciente pacienteActual=findPacienteById(pacienteCargado.getIdPaciente());
+
+boolean existecorreo=false,existecorreoPaciente=false,existeIdentificacion=false;
+
+if (!pacienteActual.getCorreoPac().equals(pacienteCargado.getCorreoPac())) {
+	existecorreo=findAthUsuarioCorreo(pacienteCargado.getCorreoPac());
+	existecorreoPaciente=findPacPacienteCorreo(pacienteCargado.getCorreoPac());
+	if (existecorreo||existecorreoPaciente) {
+		throw new Exception("Ya existe un paciente con el correo "+pacienteCargado.getCorreoPac());
+	}
+	
+}
+if (!pacienteActual.getIdentificacion().equals(pacienteCargado.getIdentificacion())) {
+existeIdentificacion=findPacPacienteIdentificacion(pacienteCargado.getIdentificacion());
+if (existeIdentificacion) {
+	throw new Exception("La identificación "+pacienteCargado.getIdentificacion()+" ya se encuentra registrada");	
+}
+}
+AuthUsuario usuario=findAthUsuarioByCorreo(pacienteActual.getCorreoPac());
+pacienteActual.setApellidosPac(pacienteCargado.getApellidosPac());
+pacienteActual.setAuthUsuario(usuario);
+pacienteActual.setCorreoPac(pacienteCargado.getCorreoPac());
+pacienteActual.setDireccionPac(pacienteCargado.getDireccionPac());
+pacienteActual.setFotoPac(pacienteCargado.getFotoPac());
+pacienteActual.setIdentificacion(pacienteCargado.getIdentificacion());
+pacienteActual.setNombresPac(pacienteCargado.getNombresPac());
+pacienteActual.setTelefonoPac(pacienteCargado.getTelefonoPac());
+em.merge(pacienteActual);
+
 		}  
 //Eliminar paciente
 		public void eliminarPaciente(int id_paciente) throws Exception {
@@ -243,7 +289,9 @@ em.merge(pacienteActual);
 				throw new Exception("No se puede eliminar el paciente está siendo utilizado en las facturas");
 	}
 			PacPaciente paciente=findPacienteById(id_paciente);
+			AuthUsuario usuario=findAthUsuarioByCorreo(paciente.getCorreoPac());
 			em.remove(paciente);
+			em.remove(usuario);
 			
 		}
 		

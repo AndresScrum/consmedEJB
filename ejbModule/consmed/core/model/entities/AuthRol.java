@@ -16,7 +16,7 @@ public class AuthRol implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="AUTH_ROL_IDROL_GENERATOR", sequenceName="SEQ_AUTH_ROL")
+	@SequenceGenerator(name="AUTH_ROL_IDROL_GENERATOR", sequenceName="SEQ_AUTH_ROL",allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="AUTH_ROL_IDROL_GENERATOR")
 	@Column(name="id_rol")
 	private Integer idRol;
@@ -28,7 +28,7 @@ public class AuthRol implements Serializable {
 	private String nombreRol;
 
 	//bi-directional many-to-one association to AuthUsuario
-	@OneToMany(mappedBy="authRol")
+	@OneToMany(mappedBy="authRol",cascade=CascadeType.ALL)
 	private List<AuthUsuario> authUsuarios;
 
 	public AuthRol() {

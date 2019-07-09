@@ -17,7 +17,7 @@ public class PacCabeceraHc implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="PAC_CABECERA_HC_IDCABECERA_GENERATOR", sequenceName="SEQ_PAC_CABECERA_HC")
+	@SequenceGenerator(name="PAC_CABECERA_HC_IDCABECERA_GENERATOR", sequenceName="SEQ_PAC_CABECERA_HC",allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="PAC_CABECERA_HC_IDCABECERA_GENERATOR")
 	@Column(name="id_cabecera")
 	private Integer idCabecera;
@@ -39,7 +39,7 @@ public class PacCabeceraHc implements Serializable {
 	private PacPaciente pacPaciente;
 
 	//bi-directional many-to-one association to PacHistoriaClinica
-	@OneToMany(mappedBy="pacCabeceraHc")
+	@OneToMany(mappedBy="pacCabeceraHc",cascade=CascadeType.ALL)
 	private List<PacHistoriaClinica> pacHistoriaClinicas;
 
 	public PacCabeceraHc() {

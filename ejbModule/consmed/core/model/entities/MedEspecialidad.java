@@ -16,7 +16,7 @@ public class MedEspecialidad implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="MED_ESPECIALIDAD_IDESPECIALIDAD_GENERATOR", sequenceName="SEQ_MED_ESPECIALIDAD")
+	@SequenceGenerator(name="MED_ESPECIALIDAD_IDESPECIALIDAD_GENERATOR", sequenceName="SEQ_MED_ESPECIALIDAD",allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="MED_ESPECIALIDAD_IDESPECIALIDAD_GENERATOR")
 	@Column(name="id_especialidad")
 	private Integer idEspecialidad;
@@ -28,7 +28,7 @@ public class MedEspecialidad implements Serializable {
 	private String nombreEsp;
 
 	//bi-directional many-to-one association to MedMedico
-	@OneToMany(mappedBy="medEspecialidad")
+	@OneToMany(mappedBy="medEspecialidad",cascade=CascadeType.ALL)
 	private List<MedMedico> medMedicos;
 
 	public MedEspecialidad() {
