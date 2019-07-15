@@ -330,13 +330,24 @@ public class PacManagerPaciente {
 	 * Historia clinica
 	 * 
 	 ****************************************/
+	
+	/**
+	 * Encontrar cabecera por ID
+	 * @param idCabecera
+	 * @return
+	 */
+		public PacCabeceraHc findCabeceraHcById(int idCabecera) {
+			PacCabeceraHc cab = em.find(PacCabeceraHc.class, idCabecera);
+			return cab;
+
+		}
 	/**
 	 * Crear cabecera historia clínica
 	 */
 	public void ingresarPacCabeceraHc(PacPaciente paciente, String fechaNacimiento, double peso, double altura,
 			String genero, String ocupacion) throws Exception {
-
-		if(existePacienteCabeceraHc(paciente.getIdPaciente())) {
+System.out.println("ingresarCabe idPaci: "+paciente.getIdPaciente());
+		if(!existePacienteCabeceraHc(paciente.getIdPaciente())) {
 			PacCabeceraHc cabera = new PacCabeceraHc();
 			cabera.setPacPaciente(paciente);
 			cabera.setFechaNacimiento(fechaNacimiento);
@@ -349,6 +360,21 @@ public class PacManagerPaciente {
 			throw new Exception("Ya existe cabecera");
 		}
 		
+	}
+	
+	/**
+	 * Editar cabecera historia clínica
+	 */
+	public void editarPacCabeceraHc(PacCabeceraHc cabeceraCargado) throws Exception {
+		
+		PacCabeceraHc cabecera=findCabeceraHcById(cabeceraCargado.getIdCabecera());
+			cabecera.setPacPaciente(cabeceraCargado.getPacPaciente());
+			cabecera.setFechaNacimiento(cabeceraCargado.getFechaNacimiento());
+			cabecera.setPeso(cabeceraCargado.getPeso());
+			cabecera.setAltura(cabeceraCargado.getAltura());
+			cabecera.setGenero(cabeceraCargado.getGenero());
+			cabecera.setOcupacion(cabeceraCargado.getOcupacion());
+			em.merge(cabecera);		
 	}
 
 	public void ingresarPacHistoriaC(PacCabeceraHc cabecera, Date fechaAtencion, Time horaAtencion, MedMedico medico,
@@ -399,6 +425,7 @@ public class PacManagerPaciente {
 		List<PacCabeceraHc> lista;
 		lista = query.getResultList();
 		int numero = lista.size();
+		System.out.println("size lsitaCab: "+numero);
 		if (numero > 0)
 			return true;
 		else

@@ -115,5 +115,10 @@ public class ReserManagerCita {
 		System.out.println("Actualizó");
 		em.merge(cita);
 	}
+	
+	public void actualizarCita(ReserCita citaCargado) throws Exception{
+		System.out.println("Actualizó");
+		em.merge(citaCargado);
+	}
 
 }
