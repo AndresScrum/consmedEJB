@@ -380,6 +380,7 @@ System.out.println("ingresarCabe idPaci: "+paciente.getIdPaciente());
 	public void ingresarPacHistoriaC(PacCabeceraHc cabecera, Date fechaAtencion, Time horaAtencion, MedMedico medico,
 			String cama, String motivoConsulta, String enfermedadActual, String diagnostico, String evolucionMedica,
 			String plan, String tratamiento, String estudios, String cuidados) {
+		System.out.println("Ingresando historia clínica....");
 		PacHistoriaClinica hc = new PacHistoriaClinica();
 		hc.setPacCabeceraHc(cabecera);
 		hc.setFechaAtencion(fechaAtencion);
