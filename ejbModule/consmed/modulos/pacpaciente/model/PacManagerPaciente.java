@@ -427,7 +427,8 @@ System.out.println("ingresarCabe idPaci: "+paciente.getIdPaciente());
 	 * @throws ParseException
 	 */
 	public List<PacHistoriaClinica> findPacHistoriaClinicaByPaciente(int idPaciente) throws ParseException {		
-		String JPQL = "SELECT c FROM PacHistoriaClinica c " + "WHERE c.pacCabeceraHc.pacPaciente.idPaciente=?1";
+		String JPQL = "SELECT c FROM PacHistoriaClinica c " + "WHERE c.pacCabeceraHc.pacPaciente.idPaciente=?1 "
+				+ "ORDER BY c.fechaAtencion, c.horaAtencion desc";
 		Query q = em.createQuery(JPQL, PacHistoriaClinica.class);
 		q.setParameter(1, idPaciente);
 		@SuppressWarnings("unchecked")
