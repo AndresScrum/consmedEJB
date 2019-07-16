@@ -2,6 +2,9 @@ package consmed.modulos.pacpaciente.model;
 
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -415,6 +418,21 @@ System.out.println("ingresarCabe idPaci: "+paciente.getIdPaciente());
 			return lista.get(0);
 		}
 
+	}
+	
+	/**
+	 * Obtiene lista de las historias clínicas de un paciente
+	 * @param idPaciente
+	 * @return
+	 * @throws ParseException
+	 */
+	public List<PacHistoriaClinica> findPacHistoriaClinicaByPaciente(int idPaciente) throws ParseException {		
+		String JPQL = "SELECT c FROM PacHistoriaClinica c " + "WHERE c.pacCabeceraHc.pacPaciente.idPaciente=?1";
+		Query q = em.createQuery(JPQL, PacHistoriaClinica.class);
+		q.setParameter(1, idPaciente);
+		@SuppressWarnings("unchecked")
+		List<PacHistoriaClinica> list = q.getResultList();
+		return list;
 	}
 
 	@SuppressWarnings("unchecked")
