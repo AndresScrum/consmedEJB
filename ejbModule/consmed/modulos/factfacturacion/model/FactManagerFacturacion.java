@@ -36,5 +36,10 @@ public class FactManagerFacturacion {
     	factura.setPacPaciente(pacPaciente);
     	em.persist(factura);
     }
+    
+    public FactHospital findFacHospitalById(int idHospital) {
+    	FactHospital hospital=em.find(FactHospital.class, idHospital);
+    	return hospital;
+    }
 
 }
